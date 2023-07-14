@@ -3,12 +3,14 @@ apnggif
 requests
 youtube-dl @ git+https://github.com/ytdl-org/youtube-dl.git
 PyNaCl
---upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+google-api-python-client 
+google-auth-httplib2 
+google-auth-oauthlib
 validators
 gspread
 gspread-formatting
 discord.py-pagination
--U discord-py-interactions
+discord-py-interactions
 discord-ext-menus
 discord-pretty-help
 python-dateutil
