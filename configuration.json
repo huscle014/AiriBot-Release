@@ -1,0 +1,45 @@
+{
+  "appname":"airibot",
+  "configurations": {
+    "token" : "[token to connect to discord bot]",
+    "features": [
+      {
+        "name": "music",
+        "enabled": true
+      },
+      {
+        "name": "minigame",
+        "enabled": true
+      },
+      {
+        "name": "utilities",
+        "enabled": true
+      },
+      {
+        "name": "admin",
+        "enabled": true
+      },
+      {
+        "name": "scoreboard",
+        "enabled": true
+      }
+    ],
+    "log":{
+      "filename":"",
+      "level":"debug",
+      "by_date": true
+    },
+    "gspread":{
+      "default_spreadsheet_id":"[the google sheet id for scoreboard]",
+      "share_account":[
+        {
+          "account":"[email address]",
+          "permission":{
+            "type":"user",
+            "role":"writer"
+          }
+        }
+      ]
+    }
+  }
+}
