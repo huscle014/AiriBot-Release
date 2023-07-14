@@ -1,0 +1,19 @@
+pip install discord.py
+pip install apnggif
+pip install requests
+pip install git+https://github.com/ytdl-org/youtube-dl.git
+pip install PyNaCl
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+pip install validators
+pip install gspread
+pip install gspread-formatting
+pip install discord.py-pagination
+pip install -U discord-py-interactions
+pip install discord-ext-menus
+pip install discord-pretty-help
+pip install python-dateutil
+pip install pytesseract (for ocr)
+pip install tesseract
+pip install tesseract-ocr
+pip install numpy
+pip install opencv-python
