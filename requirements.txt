@@ -12,7 +12,7 @@ gspread-formatting
 discord.py-pagination
 discord-py-interactions
 discord-ext-menus
-discord-pretty-help
+discord-pretty-help @ https://github.com/CasuallyCalm/discord-pretty-help.git
 python-dateutil
 pytesseract
 tesseract
