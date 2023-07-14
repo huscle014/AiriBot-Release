@@ -14,7 +14,7 @@ discord-py-interactions
 discord-ext-menus
 discord-pretty-help
 python-dateutil
-pytesseract (for ocr)
+pytesseract
 tesseract
 tesseract-ocr
 numpy
