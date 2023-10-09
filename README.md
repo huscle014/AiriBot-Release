@@ -12,8 +12,8 @@ https://www.tutorialspoint.com/sqlite/sqlite_installation.htm
 2. add role based on the reaction given, required more flexibility to assign roles (in manual manner)
 3. generate random number/repeated pattern
 4. complete tic tac toe game (need range?)
-5. youtube video streaming (bot doing streaming in channel?), --music streaming--
-6. --scoreboad using gsheet--
+5. youtube video streaming (bot doing streaming in channel?), ~~music streaming~~
+6. ~~scoreboad using gsheet~~
 7. enhance or reduce image quality
 n. *to be added...*
 
@@ -30,7 +30,7 @@ n. *to be added...*
     - extract based on the reactions given to a message, in addition, the user can provide parameter to specify what is the range of emoji to be extracted
 6. extract sticker based on the message reply to, animated png will be converted to gif format
 7. youtube music playing at voice channel
-8. scoreboard (integration with google sheet api, certain functions still underlaying developing progress)
+8. scoreboard (~~integration with google sheet api, certain functions still underlaying developing progress~~ integrated database)
 9. moderation tools - manage emoji (add and remove emoji)
 
 ## ERROR during development and solution:
