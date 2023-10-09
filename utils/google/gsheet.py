@@ -7,7 +7,7 @@ import re
 import validators
 import gspread
 
-from utils import logger
+import utils.logger as logger
 
 class GSheet:
     # If modifying these scopes, delete the file token.json.
@@ -19,12 +19,13 @@ class GSheet:
     CRED_DIR_PATH = f"{os.getcwd()}\\gworkshop_cred\\"
     SERVICE_ACCOUNT = f"{CRED_DIR_PATH}service_account.json"
 
-    __slots__ = ('spreadsheet_id', 'client', 'sheet')
+    __slots__ = ('spreadsheet_id', 'client', 'sheet', 'logger')
 
     def __init__(self, _spreadsheet_id: str = ''):
         self.spreadsheet_id = _spreadsheet_id
         self.client = None
         self.sheet = None
+        self.logger = logger.Logger("GSheet")
 
         os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
         
@@ -37,7 +38,7 @@ class GSheet:
         try:
             gc = gspread.service_account(filename=self.SERVICE_ACCOUNT)
         except Exception as e:
-            logger.error(f"An error occurred: {e}")
+            self.logger.error(f"An error occurred: {e}")
         return gc
 
     def create(self, title):
@@ -73,11 +74,11 @@ class GSheet:
                 return worksheet
             
         worksheet = self.create_sheet(f"{name}[id:{id}]")
-        logger.debug(f"a new worksheet had been created for {name}[id:{id}]")
+        self.logger.debug(f"a new worksheet had been created for {name}[id:{id}]")
         return worksheet
     
-    @classmethod
-    def get_cell_by_rowcol(self, row, col):
+    @staticmethod
+    def get_cell_by_rowcol(row, col):
         return gspread.utils.rowcol_to_a1(row, col)
         
     def create_sheet(self, name, row = 1000, col = 1000):

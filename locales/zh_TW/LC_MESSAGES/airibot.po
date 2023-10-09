@@ -1,0 +1,100 @@
+msgid ""
+msgstr ""
+"Language: zn_TW\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+# utilities 
+msgid "msg_missing_emoji"
+msgstr "沒附上表符哦!"
+
+msgid "msg_wrong_missing_reference"
+msgstr "這不是正確的使用方式哦，需提供`reference`參數"
+
+msgid "msg_wrong_missing_url"
+msgstr "這不是正確的使用方式哦，需提供`url`參數"
+
+msgid "msg_url_unidentify"
+msgstr "所提供的網址似乎無法解讀呢"
+
+msgid "msg_not_in_server"
+msgstr "不在伺服器内呢"
+
+msgid "msg_exceed_range"
+msgstr "所提供的參數似乎不對捏~ 已超出範圍捏"
+
+msgid "msg_invalid_param_less_than"
+msgstr "所提供的參數似乎不對捏~ 應該提供小數再提供大數喲"
+
+msgid "msg_invalid_small_less_zero"
+msgstr "所提供的參數似乎不對捏~ 小數 **{rangemin}** 不在範圍内"
+
+msgid "msg_content_unidentify"
+msgstr "沒辦法辨識内容呢"
+
+msgid "msg_emoji_all"
+msgstr "這裏是反應裏全部的表符~ <:airi_excited:1123477536035319868>"
+
+msgid "msg_emoji_in_range"
+msgstr "這裏是反應裏第{rangemin}至{rangemax}的表符~ <:airi_excited:1123477536035319868>"
+
+msgid "msg_emoji_failed_extract"
+msgstr "似乎沒辦法截取表符.."
+
+msgid "msg_emoji_all_message"
+msgstr "這裏是訊息裏全部的表符~ <:airi_excited:1123477536035319868>"
+
+msgid "msg_missing_sticker"
+msgstr "沒附上貼圖哦"
+
+msgid "msg_sticker_footer_1"
+msgstr "已使用偷貼圖"
+
+msgid "msg_sticker_footer_2"
+msgstr "**需點開下載動圖"
+
+msgid "msg_sticker_failed"
+msgstr "沒辦法截取貼圖捏..可能是回覆的訊息不是貼圖哦"
+
+msgid "msg_banner_user_not_set"
+msgstr "用戶沒有設置佈景" 
+
+# utilities 
+
+# event 
+msgid "msg_event_member_join"
+msgstr "歡迎加入 **{guild_name}**！記得查閲規章喲"
+
+msgid "msg_event_member_join_no_default"
+msgstr "有新成員加入 **{guild_name}**，但沒有設置預設身份組喲，沒辦法自動幫新成員設置身份！"
+
+msgid "msg_event_guild_join_title"
+msgstr "嗨嗨，大家好，我是桃井愛莉！很高興認識大家"
+
+msgid "msg_event_guild_join_desc"
+msgstr "我支援不少的指令，以下都是我可以支援的指令喲！"
+
+msgid "msg_event_guild_join_btn_1"
+msgstr "更深入的認識我"
+
+msgid "msg_event_guild_join_btn_2"
+msgstr "把愛莉帶走吧"
+
+msgid "msg_event_guild_join_btn_3"
+msgstr "指令！"
+
+msgid "msg_event_guild_join_btn_3_resp"
+msgstr "可以使用 **</help:1133826969637752875>** 來獲得指令資訊喲！"
+
+msgid "msg_event_mentioned_1"
+msgstr "嗨嗨，有什麽需要幫助的嗎？"
+
+msgid "msg_event_mentioned_2"
+msgstr "可以使用 **</help:1133826969637752875>** 來獲得指令資訊喲！"
+
+msgid "msg_error_missing_parameter"
+msgstr "缺少了重要的參數哦"
+
+msgid "msg_error_common"
+msgstr "指令似乎有誤呢 我沒法辦理解（納悶）"
+
+# event

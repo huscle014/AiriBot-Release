@@ -1,1 +1,10 @@
-/.vscode
+log/*
+**/__pycache__/*
+**/temp/*
+**/tmp/*
+**/resources/data
+**/utils/database/script/patch/patch_ba_(character|school)_list*
+**/utils/database/script/patch/*.*
+**/locales/**/*.mo
+**/test.*
+**/.vscode/*

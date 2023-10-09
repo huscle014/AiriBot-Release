@@ -1,7 +1,9 @@
 {
   "appname":"airibot",
+  "version":"2.0.0 beta 1",
+  "environment":"PROD",
   "configurations": {
-    "token" : "[token to connect to discord bot]",
+    "token" : "[place the discord bot token here]",
     "features": [
       {
         "name": "music",
@@ -9,7 +11,7 @@
       },
       {
         "name": "minigame",
-        "enabled": true
+        "enabled": false
       },
       {
         "name": "utilities",
@@ -17,28 +19,56 @@
       },
       {
         "name": "admin",
-        "enabled": true
+        "enabled": false
       },
       {
         "name": "scoreboard",
         "enabled": true
+      },
+      {
+        "name": "bluearchive",
+        "enabled": true,
+        "whitelist":[]
       }
     ],
     "log":{
       "filename":"",
       "level":"debug",
-      "by_date": true
+      "by_date": false
     },
     "gspread":{
-      "default_spreadsheet_id":"[the google sheet id for scoreboard]",
+      "default_spreadsheet_id":"[obsolute, previously utilized for scoreboard]",
       "share_account":[
         {
-          "account":"[email address]",
+          "account":"[obsolute, which account to be associate when google sheet created]",
           "permission":{
             "type":"user",
             "role":"writer"
           }
         }
+      ]
+    },
+    "email":{
+      "server":{
+        "proxy":"smtp.gmail.com",
+        "port":"465"
+      },
+      "sender":{
+        "email":"[email to send alert or any event occurs]",
+        "secret":"[the application password which had been encrypted using key in kms and converted into base64 value]"
+      },
+      "recipients":[
+        "[the intended user(s) to receive the event alert]"
+      ]
+    },
+    "supported_languages":[
+      "en_US", "zh_TW"
+    ]
+  },
+  "developer":{
+    "notification":{
+      "channels":[
+        "email"
       ]
     }
   }

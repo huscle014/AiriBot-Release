@@ -1,21 +1,58 @@
-discord.py
-apnggif
-requests
-youtube-dl @ git+https://github.com/ytdl-org/youtube-dl.git
-PyNaCl
-google-api-python-client 
-google-auth-httplib2 
-google-auth-oauthlib
-validators
-gspread
-gspread-formatting
-discord.py-pagination
-discord-py-interactions
-discord-ext-menus
-discord-pretty-help @ https://github.com/CasuallyCalm/discord-pretty-help.git
-python-dateutil
-pytesseract
-tesseract
-tesseract-ocr
-numpy
-opencv-python
+# discord.py==2.4.0a4877+g270fa5f2
+discord.py==2.3.2
+# git+https://github.com/Rapptz/discord.py
+# discord-rich-presence
+apnggif==0.1.4
+requests==2.31.0
+# youtube_dl
+git+https://github.com/ytdl-org/youtube-dl.git
+PyNaCl==1.5.0
+google-api-python-client==2.91.0
+google-auth-httplib2==0.1.0
+google-auth-oauthlib==1.0.0
+validators==0.20.0
+gspread==5.10.0
+gspread-formatting==1.1.2
+discord.py-pagination==0.0.5
+discord-ext-menus==1.1
+discord-pretty-help==2.0.7
+python-dateutil==2.8.2
+pytube==15.0.0
+beautifulsoup4==4.12.2
+lxml==4.9.3
+pixiv-api==1.0.0
+oauth2client==4.1.3
+blowfish==0.6.1
+# profanity-check
+pyside6==6.5.2
+tabulate==0.9.0
+psutil==5.9.5
+pandas==2.0.3
+openpyxl==3.1.2
+polib==1.2.0
+numpy==1.24.4
+xlsxwriter==3.1.2
+img2pdf==0.4.4
+reportlab==4.0.4
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.21.1
+schedule==1.2.0
+
+## this part ahead is due to testing
+### text to speech
+# pytesseract
+# tesseract
+# tesseract-ocr
+# opencv-python
+# torch
+# torchaudio
+# gTTS
+# ipython
+# git+https://github.com/jnordberg/tortoise-tts.git
+# audioread
+# joblib
+# pydantic
+
+# ### Super Resolution
+# opencv-contrib-python
+# imutils

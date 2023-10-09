@@ -1,29 +1,18 @@
-import discord
+# region setup required library
+from setuplibrary import SetupLibrary as pre
 
-from discord.ext import commands
+pre.setup()
+# endregion
 
-import utils.constant as const
-from utils import logger
+# region load constant
+from utils.constant import Constant as const
 
-import plugin.commandsetup as cogcommandsetup
-from plugin.event import setup as eventsetup
-import plugin.event as event
+const.load_configuration()
+# endregion
 
-intents = discord.Intents.all()
-intents.message_content = True
+# region run client
+from client import Client
 
-def get_prefixes(bot, message):
-    cog_prefixes = (cog.prefix for cog in bot.cogs.values() if hasattr(cog, 'prefix'))
-    default_prefixes = ('!')
-    return (*cog_prefixes, *default_prefixes)
-
-bot = commands.Bot(command_prefix=get_prefixes, intents=intents)
-
-if __name__ == "__main__":
-    try:
-        cogcommandsetup.CogSetup(bot).setup()
-        eventsetup(bot)
-        
-        bot.run(const.BOT_TOKEN)
-    finally:
-        logger.debug("The bot had complete the startup")
+client = Client()
+client.run()
+# endregion

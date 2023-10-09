@@ -1,0 +1,100 @@
+msgid ""
+msgstr ""
+"Language: en_US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+# utilities
+msgid "msg_missing_emoji"
+msgstr "There's no emoji attached!"
+
+msgid "msg_wrong_missing_reference"
+msgstr "This is not the correct way to use. Missing the `reference` parameter."
+
+msgid "msg_wrong_missing_url"
+msgstr "This is not the correct way to use. Missing the `url` parameter."
+
+msgid "msg_url_unidentify"
+msgstr "It seems that the URL provided cannot be deciphered."
+
+msgid "msg_not_in_server"
+msgstr "Not in the server."
+
+msgid "msg_exceed_range"
+msgstr "The parameters provided seem to be incorrect and out of range."
+
+msgid "msg_invalid_param_less_than"
+msgstr "The parameters provided don't seem to be correct, the min range should be less than upper range."
+
+msgid "msg_invalid_small_less_zero"
+msgstr "The parameters provided do not seem to be correct~ Fractions **{rangemin}** are out of range."
+
+msgid "msg_content_unidentify"
+msgstr "I can't identify the content."
+
+msgid "msg_emoji_all"
+msgstr "Here are all the emojis in the reaction~ <:airi_excited:1123477536035319868>"
+
+msgid "msg_emoji_in_range"
+msgstr "These are the emojis from {rangemin} to {rangemax} in the reaction~ <:airi_excited:1123477536035319868>"
+
+msgid "msg_emoji_failed_extract"
+msgstr "There doesn't seem to be a way to intercept the emoji..."
+
+msgid "msg_emoji_all_message"
+msgstr "Here are all the emojis in the message~ <:airi_excited:1123477536035319868>"
+
+msgid "msg_missing_sticker"
+msgstr "There's no sticker attached."
+
+msgid "msg_sticker_footer_1"
+msgstr "used command"
+
+msgid "msg_sticker_footer_2"
+msgstr "**Click to download source"
+
+msgid "msg_sticker_failed"
+msgstr "I can't capture the post... Maybe it's because the replies aren't sticker."
+
+msgid "msg_banner_user_not_set"
+msgstr "The user did not setup the banner" 
+
+# utilities
+
+# event 
+msgid "msg_event_member_join"
+msgstr "Welcome to **{guild_name}**! Remember to check the rules."
+
+msgid "msg_event_member_join_no_default"
+msgstr "A new member joins **{guild_name}**, but there is no default role set, so I can't automatically set the role for the new member!"
+
+msgid "msg_event_guild_join_title"
+msgstr "Hi, hi, everyone. I'm Momoi Airi! Nice to meet you all."
+
+msgid "msg_event_guild_join_desc"
+msgstr "I support quite a few commands, here are the ones I can support!"
+
+msgid "msg_event_guild_join_btn_1"
+msgstr "Get to know me better."
+
+msgid "msg_event_guild_join_btn_2"
+msgstr "Bring me with ya"
+
+msgid "msg_event_guild_join_btn_3"
+msgstr "Command!"
+
+msgid "msg_event_guild_join_btn_3_resp"
+msgstr "You can use **</help:1133826969637752875>** to get commands information!"
+
+msgid "msg_event_mentioned_1"
+msgstr "Hey yo. What can I do for ya?"
+
+msgid "msg_event_mentioned_2"
+msgstr "You can use **</help:1133826969637752875>** to get commands information!"
+
+msgid "msg_error_missing_parameter"
+msgstr "Missing important parameters."
+
+msgid "msg_error_common"
+msgstr "There seems to be a mistake in the command. I can't figure it out."
+
+# event

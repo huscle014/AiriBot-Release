@@ -2,43 +2,49 @@ import discord
 from discord.ext import commands, tasks
 
 import asyncio
-from time import time
 import traceback
 import sys
+import datetime, time
+import threading
 
-from utils import logger
+import utils.logger as logger
+from utils.cutils import check_send_email, load_server_setting, _gettext, get_server_locale
 import staticrunner as sr
+from utils.constant import Constant as const
+from utils.google.gmailclient import GmailClient as gc
+from utils.database.connection import raw
 
-from pretty_help import PrettyHelp, EmojiMenu, AppMenu
+from pretty_help import PrettyHelp, AppMenu
 
 class Event(commands.Cog):
 
     __slots__ = ('bot')
 
-    sttime = int(time())
+    sttime = int(time.time())
     botactivity = [
+        # discord.Activity(
+        #     type=discord.ActivityType.playing, 
+        #     name="MMJ下課後的時間", 
+        #     state="Waiting in lobby",
+        #     description="跟MMJ的大家一起約會喲\n偷偷跟你說之後私訊會有驚喜喲",
+        #     large_image='https://cdn.discordapp.com/attachments/1123128693187940472/1125267359314235463/109185147_p0.jpg',
+        #     large_text = "Airi",
+        #     small_image = "https://cdn.discordapp.com/attachments/1123128693187940472/1125267359314235463/109185147_p0.jpg",
+        #     small_text = "Airi",
+        #     timestamps={
+        #         'end':sttime,
+        #         'start':sttime+60*60*24*365
+        #     },
+        #     buttons=["play"])
         discord.Activity(
             type=discord.ActivityType.playing, 
-            name="跟MMJ的大家一起約會喲\n偷偷跟你說之後私訊會有驚喜喲", 
-            large_image='https://cdn.discordapp.com/attachments/1123128693187940472/1125267359314235463/109185147_p0.jpg',
-            large_text = "Airi",
-            small_image = "https://cdn.discordapp.com/attachments/1123128693187940472/1125267359314235463/109185147_p0.jpg",
-            small_text = "Airi",
-            timestamps={
-                'end':sttime,
-                'start':sttime+60*60*24*365
-            },
-            buttons=["play"])
+            name="跟MMJ的大家一起約會喲\n偷偷跟你說之後私訊會有驚喜喲"
+        )
     ]
 
     def __init__(self, bot):
         self.bot = bot
-
-    # async def __local_check(self, ctx):
-    #     """A local check which applies to all commands in this cog."""
-    #     if not ctx.guild:
-    #         raise commands.NoPrivateMessage
-    #     return True
+        self.logger = logger.Logger("Event")
 
     async def __error(self, ctx, error):
         """A local error handler for all errors arising from commands in this cog."""
@@ -51,11 +57,11 @@ class Event(commands.Cog):
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
-    runloop = 1
-    @tasks.loop(seconds=20)
+    runloop = True
+    @tasks.loop(seconds=30)
     async def updateStatus(self):
         global runloop
-        if self.runloop % 2 == 0:
+        if self.runloop:
             await self.bot.change_presence(activity=discord.Activity(
                     type=discord.ActivityType.watching, 
                     name=f"愛莉目前在 {len(self.bot.guilds)} 伺服器裏應援大家喲"
@@ -63,50 +69,90 @@ class Event(commands.Cog):
         else:
             await self.bot.change_presence(activity=self.botactivity[0], status=discord.Status.do_not_disturb)
         
-        self.runloop = self.runloop + 1
+        self.runloop = not self.runloop
 
-    # EVENT LISTENER FOR WHEN THE BOT HAS SWITCHED FROM OFFLINE TO ONLINE.
+    # async def setup_hook(self):
     @commands.Cog.listener()
-    async def on_ready(self):
-        # await discord.app_commands.CommandTree(self.bot).sync()
-        logger.info("Deployed and goes online")
+    async def on_connect(self):
+        self.logger.debug("==== setup ====")
+        await self.bot.tree.sync()
         
         if not self.updateStatus.is_running():
             self.updateStatus.start()
 
         guild_count = len(self.bot.guilds)
 
-        for guild in self.bot.guilds:
-            logger.info(f"- {guild.id} (name: {guild.name.encode('utf8')})")
+        self.logger.info(f"Currently serve in {guild_count} guilds.")
+        self.logger.debug("==== setup ====")
 
-            sr.StaticRunner.setDefaultRoleOnUserJoin[guild.id] = True
+    # EVENT LISTENER FOR WHEN THE BOT HAS SWITCHED FROM OFFLINE TO ONLINE.
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.logger.info("Deployed and goes online")
+        sr.StaticRunner.time_taken_deployment = datetime.timedelta(seconds=int(round(time.time()-sr.StaticRunner.time_deploy_start)))
 
-        logger.info("Currently serve in " + str(guild_count) + " guilds.")
+        if check_send_email(): 
+            thread_send_email_notification = threading.Thread(target=self.send_email_notification)
+            thread_send_email_notification.start()
+            thread_send_email_notification.join()
+
+        thread_load_server_info = threading.Thread(target=self.load_server_info)
+        thread_load_server_info.start()
+        thread_load_server_info.join()
+
+        self.logger.debug(f"Time taken for deployment :: {sr.StaticRunner.time_taken_deployment}")
+        self.logger.debug(f"Connected as :: {self.bot.user.name}")
+        self.logger.info("==== startup completed ====")
+
+    def send_email_notification(self):
+        self.logger.info("==== startup - send email notification ====")
+        time_taken_deploy = str(sr.StaticRunner.time_taken_deployment)
+        try:
+            timestamp = datetime.datetime.now()
+            gc.ApplicationCredSender.send_email(subject=f"ALERT : Complete startup of {const.APPNAME} at {timestamp}", 
+                                                recipients=const.SMTP_RCV, body=f'<h3>This message indicate the application {const.APPNAME} had completed that startup</h3><p><table style="border-collapse:collapse;border-spacing:0;border:none" class="tg"><thead><tr><th style="border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:right;vertical-align:top;word-break:normal">Time taken for deployment:</th><th style="border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;text-align:left;vertical-align:top;word-break:normal">{time_taken_deploy}</th></tr></thead><tbody><tr><td style="border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:right;vertical-align:top;word-break:normal">Timestamp:</td><td style="border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:left;vertical-align:top;word-break:normal">{timestamp}</td></tr></tbody></table>')
+        except Exception as ex:
+            self.logger.warning(f"Failed to send email with exception :: {ex}")
+        self.logger.info("==== startup - send email notification ====")
+
+    def load_server_info(self):
+        self.logger.info("==== startup - load server info ====")
+        # for guild in self.bot.guilds:
+        #     self.logger.debug(f"- {guild.id} (name: {guild.name.encode('utf8')})")
+        load_server_setting()
+        self.logger.info("==== startup - load server info ====")
+            
 
     ###when new user joined the server
     @commands.Cog.listener()
-    async def on_member_join(self, member):
-        #logger.info(f"新成員加入， {member.guild.name}")
+    async def on_member_join(self, member: discord.Member):
+        #self.logger.info(f"新成員加入， {member.guild.name}")
+        locale = get_server_locale(member.guild.id)
+
         if member.guild.id in sr.StaticRunner.setDefaultRoleOnUserJoin:
             boolDefRole = sr.StaticRunner.setDefaultRoleOnUserJoin[member.guild.id]
             if boolDefRole and member.guild.id not in sr.StaticRunner.defaultRole:
                 guild_owner = self.bot.get_user(int(member.guild.owner.id))
-                await guild_owner.send(f"有新成員加入 **{member.guild.name}**，但沒有設置預設身份組喲，沒辦法自動幫新成員設置身份！")
+                await guild_owner.send(_gettext('msg_event_member_join_no_default', locale).format(guild_name=member.guild.name))
             elif boolDefRole:
                 await member.add_roles(sr.StaticRunner.defaultRole[member.guild.id])
             else:
-                logger.info(f"沒設置任何東西呢！")
-        await member.send(f"歡迎加入 **{member.guild.name}**！記得查閲規章喲")
+                self.logger.info(f"沒設置任何東西呢！")
+        if not member.bot:
+            await member.send(_gettext('msg_event_member_join', locale).format(guild_name=member.guild.name))
 
     @commands.Cog.listener()
-    async def on_guild_join(self, guild):
+    async def on_guild_join(self, guild: discord.Guild):
+        locale = get_server_locale(guild.id)
+
         sr.StaticRunner.setDefaultRoleOnUserJoin[guild.me] = False
+        affect = raw(f"INSERT OR REPLACE INTO DC_SERVER(SERVER_ID,SERVER_NAME) VALUES('{guild.id}','{guild.name}')")[1]
+        affect = raw(f"INSERT OR REPLACE INTO DC_SERVER_SETTING(SERVER_ID,LOCALE,EN_DEF_ROLE) VALUES('{guild.id}','en_US','0')")[1]
         for channel in guild.text_channels:
             if channel.permissions_for(guild.me).send_messages:
                 embedHi = discord.Embed(
-                            title="嗨嗨，大家好，我是桃井愛莉！很高興認識大家",
-                            description=
-                            f"我支援不少的指令，以下都是我可以支援的指令喲！",
+                            title=_gettext('msg_event_guild_join_title', locale),
+                            description=_gettext('msg_event_guild_join_desc', locale),
                     url="https://github.com/huscle014/AiriBot",
                             colour=discord.Colour.from_rgb(255, 170, 204))
                 embedHi.set_thumbnail(
@@ -115,87 +161,79 @@ class Event(commands.Cog):
                 embedHi.set_image(url="https://storage.sekai.best/sekai-assets/character/member/res007_no024_rip/card_after_training.webp")
                 embedHi.set_footer(
                             text="© Huscle - Momoi Airi discord assistance bot")
-                await channel.send(embed=embedHi, view=self.RenderViewJoinGuild())
+                await channel.send(embed=embedHi, view=self.RenderViewJoinGuild(locale))
             break
 
     ###this region for command
 
     @commands.Cog.listener()
     async def on_message(self, message :discord.Message):
-        # logger.debug(message.content)
         if message.author.bot:
             return
         elif isinstance(message.channel, discord.channel.DMChannel):
             #handle for dm (planned to do ai chatbot)
-            logger.info("received message from dm")
             pass
         elif message.type == discord.MessageType.premium_guild_subscription:
-            logger.info(str(message.author))
+            self.logger.info(str(message.author))
         elif self.bot.user.mention in message.content:
-            await message.channel.send(f"嗨嗨，有什麽需要幫助的嗎？\n可以使用 **愛莉幫幫我** 來獲得指令資訊喲！", reference=message)
-        else:
-            # await self.bot.process_commands(message)
-            pass
+            locale = get_server_locale(message.guild.id)
+            await message.channel.send(_gettext('msg_event_mentioned_1', locale) + "\n" + _gettext('msg_event_mentioned_2', locale), reference=message)
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error: Exception):
-        if isinstance(error, commands.CommandNotFound):
+    async def on_command_error(self, ctx: commands.Context, error: Exception):
+        try:
+            if ctx.interaction is not None and ctx.interaction.is_expired():
+                ctx = ctx.interaction.followup
+            if isinstance(error, commands.CommandNotFound):
+                return await ctx.defer()
+            
+            locale = get_server_locale(ctx.guild.id)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            if isinstance(error, commands.BadArgument) or isinstance(error, commands.CheckFailure):
+                await ctx.send(f"{error}")
+            elif isinstance(error, commands.MissingRequiredArgument):
+                await ctx.send(_gettext('msg_error_missing_parameter', locale) + f"\n```\n- {error}```", delete_after=30)
+            else:
+                await ctx.send(_gettext('msg_error_common', locale), delete_after=30)
+        except:
             pass
-        elif isinstance(error, commands.BadArgument):
-            pass
-        elif isinstance(error, commands.CheckFailure):
-            pass
-        elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"缺少了重要的參數哦 \n```css\n- {error}```")
-        else:
-            await ctx.send(f"指令似乎有誤呢 我沒法辦理解（納悶）")
-            raise error
+        finally:
+            await ctx.message.delete(delay=2)
 
     #send a message when join a server
     class RenderViewJoinGuild(discord.ui.View):
-        def __init__(self):
+        def __init__(self, locale):
+            self.locale = locale
             super().__init__()
-            button1 = discord.ui.Button(label="更深入的認識我", style=discord.ButtonStyle.grey, url=f'https://zh.moegirl.org.cn/zh-hant/%E6%A1%83%E4%BA%95%E7%88%B1%E8%8E%89')
+            button1 = discord.ui.Button(label=_gettext('msg_event_guild_join_btn_1', locale), style=discord.ButtonStyle.grey, url=f'https://zh.moegirl.org.cn/zh-hant/%E6%A1%83%E4%BA%95%E7%88%B1%E8%8E%89')
             self.add_item(button1)
-            button2 = discord.ui.Button(label="把愛莉帶走吧", style=discord.ButtonStyle.grey, url=f"https://discord.com/api/oauth2/authorize?client_id=1123081408529842206&permissions=8&scope=bot%20applications.commands")
+            button2 = discord.ui.Button(label=_gettext('msg_event_guild_join_btn_2', locale), style=discord.ButtonStyle.grey, url=f"https://discord.com/api/oauth2/authorize?client_id=1123081408529842206&permissions=8&scope=bot%20applications.commands")
             self.add_item(button2)
 
-        @discord.ui.select( # the decorator that lets you specify the properties of the select menu
-            placeholder = "支援的指令！", # the placeholder text that will be displayed if nothing is selected
-            min_values = 1, # the minimum number of values that must be selected by the users
-            max_values = 1, # the maximum number of values that can be selected by the users
-            options = [ # the list of options from which users can choose, a required field
-                discord.SelectOption(
-                    value="預設身份組",
-                    label="預設身份組 【僅管管能使用！!】",
-                    description="設置預設身份組，如已設置開啓自動發放身分組，此身份會給予新加入的成員"
-                ),
-                discord.SelectOption(
-                    value="查看預設身份組",
-                    label="查看預設身份組 【僅管管能使用！！】",
-                    description="查看預設身份組，需提前設置 **預設身份組** "
-                ),
-                discord.SelectOption(
-                    value="移除預設身份組",
-                    label="移除預設身份組 【僅管管能使用！！】",
-                    description="移除已設置的預設身份組"
-                )
-            ]
-        )
-        async def select_callback(self, interaction:discord.Interaction, select: discord.ui.Select): # the function called when the user is done selecting options
-            await interaction.response.send_message(
-                f"已選取指令 **{select.values[0]}**\n可以將這個指令複製到對話框後發送來使用喲~ \\\(ᵔᵕᵔ)/",ephemeral=True)
+            button3 = discord.ui.Button(label=_gettext('msg_event_guild_join_btn_3', locale), style=discord.ButtonStyle.primary)
+            button3.callback(self.button_callback)
+            self.add_item(button3)
+
+        async def button_callback(self, interaction:discord.Interaction, button: discord.Button):
+            await interaction.response.send_message(_gettext('msg_event_guild_join_btn_3_resp', self.locale))
+
+class CustomHelp(PrettyHelp):
+
+    @discord.app_commands.command(name="help")
+    async def _app_command_callback(
+        self, interaction: discord.Interaction, command: str = None
+    ):
+        """Application help command for AiriBot"""
+        bot = interaction.client
+        ctx = await commands.Context.from_interaction(interaction)
+        ctx.bot = bot
+        await ctx.invoke(bot.get_command("help"), command=command)
 
 def setup(bot):
     event = Event(bot)
-    attributes = {
-        'name': "help",
-        'aliases': ["愛莉幫幫我", "關於愛莉"],
-        'cooldown': commands.CooldownMapping.from_cooldown(3, 5, commands.BucketType.user),
-    }
 
     menu = AppMenu(ephemeral=True)
-    bot.help_command = PrettyHelp(menu=menu, 
+    bot.help_command = CustomHelp(menu=menu, 
                                   color=discord.Color.from_rgb(255, 170, 204), 
                                   thumbnail_url="https://cdn.discordapp.com/attachments/1123128693187940472/1125267359314235463/109185147_p0.jpg",
                                   image_url="https://storage.sekai.best/sekai-assets/character/member/res007_no024_rip/card_after_training.webp",

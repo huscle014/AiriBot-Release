@@ -1,56 +1,21 @@
 # AiriBot
-a multipurpose discord bot developed using python
-
-![Icon.](https://storage.sekai.best/sekai-assets/character/member/res007_no024_rip/card_after_training.webp)
 
 ## Environment setup: python required
-install discord library:
-1. pip install discord.py
-2. pip install discord-rich-presence (optional)
-3. pip install apnggif
-4. pip install requests
-5. pip install youtube_dl / pip install git+https://github.com/ytdl-org/youtube-dl.git
-6. pip install PyNaCl (used with youtube_dl)
-7. pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
-8. pip install validators
-9. pip install gspread
-10. pip install gspread-formatting
-11. pip install discord.py-pagination
-12. pip install -U discord-py-interactions
-13. pip install discord-ext-menus
-14. pip install discord-pretty-help
-15. pip install python-dateutil
-16. pip install pytesseract (for ocr)
-    - pip install tesseract
-    - pip install tesseract-ocr
-    - alt for executable for tesseract-ocr: https://github.com/UB-Mannheim/tesseract/wiki
-17. pip install numpy
-18. pip install opencv-python
+this part had been migrated to subprocess which will be auto run during deployment.
+For more information, please check `main.py` and `requirements.txt`
 
-## this part ahead is due to testing
-1. pip install pytesseract (for ocr)
-    - pip install tesseract
-    - pip install tesseract-ocr
-    - alt for executable for tesseract-ocr: https://github.com/UB-Mannheim/tesseract/wiki
-2. pip install numpy
-3. pip install opencv-python
-4. pip install torch
-5. pip install torchaudio
-6. pip install gTTS
-7. pip install ipython
-8. pip install git+https://github.com/jnordberg/tortoise-tts.git
+## Configure SQLite
+https://www.tutorialspoint.com/sqlite/sqlite_installation.htm
 
 ## TODO list:
 1. add customizable message for greeting message
 2. add role based on the reaction given, required more flexibility to assign roles (in manual manner)
 3. generate random number/repeated pattern
 4. complete tic tac toe game (need range?)
-5. youtube video streaming (bot doing streaming in channel?), ~~music streaming~~
-6. ~~scoreboad using gsheet~~
+5. youtube video streaming (bot doing streaming in channel?), --music streaming--
+6. --scoreboad using gsheet--
 7. enhance or reduce image quality
 n. *to be added...*
-
-Last aim: deploy into server, let the bot join anywhere else
 
 ## Available functions as follows (dated at 10/07/2023)
 1. send greeting message to member on the newly joined

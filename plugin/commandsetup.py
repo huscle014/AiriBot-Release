@@ -1,54 +1,57 @@
-import asyncio
-
-from plugin.musicbot import setup as musicbotsetup
-from plugin.minigame import setup as minigamesetup
-from plugin.utilities import setup as utilitiessetup
-from plugin.administration import setup as administrationsetup
-from plugin.scoreboard import setup as scoreboardsetup
-
-import utils.constant as const
-from utils import logger
+from utils.constant import Constant as const
+import utils.logger as logger
 from utils.cutils import retrieve_configuration
 
 class CogSetup:
     def __init__(self, bot):
         self.bot = bot
+        self.logger = logger.Logger("CogSetup")
 
-    def setup(self, load_config = True):
+    async def setup(self, load_config = True):
+        self.logger.debug("==== CogSetup :: setup :: start ====")
         data = None
         if load_config:
             data = retrieve_configuration()
         
         if data is None:
-            logger.debug(f"configuration file not found, default deploying all the available functions (commands)")
-            self.enable_all_features()
+            self.logger.debug(f"configuration file not found, default deploying all the available functions (commands)")
+            await self.enable_all_features()
         else:
             features = data["configurations"]["features"]
             for feature in features:
+                self.logger.debug(f"enable plugin {feature['name']} to {feature['enabled']}")
                 if feature["enabled"]:
-                    logger.debug(f"enable plugin {feature['name']} to {feature['enabled']}")
                     _invoke = getattr(self, const.FEATURE_MAPPING[feature["name"]])
-                    _invoke()
-            logger.debug("complete enabled plugin based on configuration file..")
+                    await _invoke()
+            self.logger.debug("complete enabled plugin based on configuration file..")
+        await self.misc()
+        self.logger.debug("==== CogSetup :: setup :: complete ====")
 
-    def enable_all_features(self):
-        self.musicbot()
-        self.minigame()
-        self.utilities()
-        self.admin()
-        self.scoreboard()
+    async def enable_all_features(self):
+        await self.musicbot()
+        await self.minigame()
+        await self.utilities()
+        await self.admin()
+        await self.scoreboard()
+        await self.bluearchive()
 
-    def musicbot(self):
-        asyncio.run(musicbotsetup(self.bot))
+    async def musicbot(self):
+        await self.bot.load_extension("plugin.musicbot")
 
-    def minigame(self):
-        asyncio.run(minigamesetup(self.bot))
+    async def minigame(self):
+        await self.bot.load_extension("plugin.minigame")
 
-    def utilities(self):
-        asyncio.run(utilitiessetup(self.bot))
+    async def utilities(self):
+        await self.bot.load_extension("plugin.utilities")
 
-    def admin(self):
-        asyncio.run(administrationsetup(self.bot))
+    async def admin(self):
+        await self.bot.load_extension("plugin.administration")
 
-    def scoreboard(self):
-        asyncio.run(scoreboardsetup(self.bot))
+    async def scoreboard(self):
+        await self.bot.load_extension("plugin.scoreboard")
+
+    async def bluearchive(self):
+        await self.bot.load_extension("plugin.bluearchive")
+
+    async def misc(self):
+        await self.bot.load_extension("plugin.misc")
